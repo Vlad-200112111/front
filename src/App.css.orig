@@ -1,0 +1,138 @@
+:root {
+    --index: calc(1vw + 1vh);
+}
+
+* {
+    /*font-size: calc(var(--index) * 0.8) !important;*/
+}
+
+.MuiPagination-root {
+    padding-top: 20px;
+    display: flex !important;
+    justify-content: center;
+}
+
+.MuiPagination-ul {
+    background: rgba(33, 50, 89, 0.19);
+    display: flex !important;
+    /*max-width: 350px !important;*/
+    justify-content: space-between !important;
+    max-width: 70%;
+}
+
+.MuiPaginationItem-root {
+    margin: 0 !important;
+    padding: 0 20px !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.MuiPaginationItem-root:hover {
+    background: rgba(33, 50, 89, 0.5) !important
+}
+
+.MuiPaginationItem-previousNext {
+    background: rgb(255 152 69);
+}
+
+.MuiPaginationItem-previousNext:hover {
+    background: linear-gradient(0deg, #faac20, #ecaf3a) !important;
+}
+
+.MuiPaginationItem-root.Mui-selected {
+    background: rgba(33, 50, 89, 0.5) !important;
+}
+
+.MuiCard-root {
+    background: rgba(33, 50, 89, 0.5) !important;
+}
+
+.MuiCardContent-root {
+    color: #fff;
+    background: none;
+}
+
+.MuiBackdrop-root {
+    backdrop-filter: blur(15px)
+}
+
+.HomeBack {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -5;
+    background-size: cover;
+    /*transform: scale(0.9) ;*/
+    background-repeat: no-repeat;
+}
+
+@media (min-width: 1920px) {
+    .HomeBack {
+        background-position: center;
+    }
+}
+
+.MuiPaper-root {
+    background: transparent !important;
+}
+
+.MuiDrawer-paperAnchorLeft {
+    background: #fff !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 12px 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.MuiMenu-paper {
+    background: #fff !important;
+}
+
+
+.MuiList-root {
+    color: #ffffff !important;
+}
+
+.MuiAccordion-root {
+<<<<<<< HEAD
+    background: rgb(90, 125, 206) !important;
+    border-radius: 0 !important;
+=======
+    background: #fff !important;
+>>>>>>> origin/styles_fix
+}
+
+.MuiAccordion-root:hover {
+    background: rgb(79, 117, 204) !important;
+}
+
+.MuiAccordionSummary-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pageBack {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    background-position: bottom;
+    top: 0;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: -5;
+}
+
+/*button:hover, .css-eoce3q-MuiButtonBase-root-MuiButton-root:hover{*/
+/*    background: rgb(255 127 24) !important;*/
+/*}*/
+
+.myTab:hover{
+    background: rgba(61, 84, 136, 0.6) !important;
+}
+
+.MuiCardActionArea-root:hover{
+    background: rgba(61, 84, 136, 0.6) !important;
+}

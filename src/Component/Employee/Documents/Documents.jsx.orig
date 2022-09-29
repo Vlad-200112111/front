@@ -1,0 +1,148 @@
+import {useState, useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import validationSchema from "./validation";
+import {
+    Grid,
+    Tab, ToggleButton, ToggleButtonGroup
+} from '@mui/material';
+
+import api from "../../../Services/api";
+
+import useStylesMain from "../../../Styles/MainStyles";
+import MainDocuments from "../../Modules/MainDocuments";
+import CustomTab from "../../UI/CustomTab/CustomTab";
+import CustomTabPanel from "../../UI/CustomTabPanel/CustomTabPanel";
+import ClickAwayButton from "../../UI/СlickAwayButton/ClickAwayButton";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import {Typography} from "@material-ui/core";
+import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
+import GridViewIcon from "@mui/icons-material/GridView";
+import React from "react";
+import ItemDocumentsGrid from "../../General/Document/Item/ItemDocumentsGrid";
+import ItemDocumentsLine from "../../General/Document/Item/ItemDocumentsLine";
+import CustomAlert from "../../UI/CustomAlert/CustomAlert";
+import CustomAutocomplete from "../../UI/CustomAutocomplete/CustomAutocomplete";
+import CustomButton from "../../UI/CustomButton/CustomButton";
+
+
+function DocumentsForEmployeeDean() {
+    const classesMain = useStylesMain()
+    const [listDocuments, setListDocuments] = useState([]);
+    const [view, setView] = useState('grid')
+    const [chosenType, setChosenType] = useState({})
+    const [listTypes, setListTypes] = useState([]);
+    const role = 'employee'
+
+    useEffect(async () => {
+        const {data: ListTypes} = await api.documents.getListTypes();
+        setListTypes(ListTypes)
+        setChosenType(ListTypes[0])
+        
+        const {data: ListDocuments} = await api.documents.getListDocumentsFromEmployer();
+        setListDocuments(ListDocuments.reverse())
+    }, []);
+
+    const handleChangeView = (event, newValue) => {
+        setView(newValue)
+    }
+
+    const filterByType = async () => {
+        const {data: ListDocumentsByType} = await api.documents.getListDocumentsByTypeIdForEmployer(chosenType?.id)
+        setListDocuments(ListDocumentsByType.reverse())
+    }
+
+    const resetFilter = async () => {
+        const {data: ListDocuments} = await api.documents.getListDocumentsFromEmployer()
+        setListDocuments(ListDocuments.reverse())
+    }
+
+    const {
+        formState: {errors},
+    } = useForm({
+        resolver: yupResolver(validationSchema),
+    });
+    
+    return (
+        <MainDocuments>
+            <CustomTab firstTab={'1'}>
+                {<Tab
+                    className={classesMain.TabsItems}
+                    label="Заказанные справки" value='1'/>}
+                {
+                    <CustomTabPanel value={'1'} key={'1'}>
+                        <Grid item style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            flexWrap: 'wrap-reverse'
+                        }} xs={12}>
+                            <ClickAwayButton title={
+                                <>
+                                    <FilterListIcon className={classesMain.Text}/>
+                                    <Typography className={classesMain.Text}>Фильтр</Typography>
+                                </>
+                            }>
+                                <CustomAutocomplete
+                                    value={chosenType}
+                                    options={listTypes}
+                                    getOptionLabel={(option) => option.typeName}
+                                    label='Тип справки'
+                                    onChange={(e, value) => {
+                                        setChosenType(value)
+                                    }}
+                                />
+                                <Grid container display='flex'>
+                                    <CustomButton onClick={filterByType} name='Поиск'/>
+                                    <CustomButton onClick={resetFilter} name='Сбросить фильтр'/>
+                                </Grid>
+                            </ClickAwayButton>
+
+                            <ToggleButtonGroup
+                                style={{marginLeft: '10px'}}
+                                color="primary"
+                                value={view}
+                                size={'small'}
+                                exclusive
+                                onChange={handleChangeView}
+                            >
+                                <ToggleButton value="list"><ViewHeadlineIcon
+                                    style={{fontSize: '20px'}}/></ToggleButton>
+                                <ToggleButton value="grid"><GridViewIcon style={{fontSize: '20px'}}/></ToggleButton>
+                            </ToggleButtonGroup>
+                        </Grid>
+                        {Array.isArray(listDocuments)?
+                            listDocuments === 'Нет справок' ?
+                                <CustomAlert
+                                    width='100%'
+                                    severity="info"
+                                    title='Информация!'
+                                    content='Заказанных справок нет!'
+                                    activeAlert={true}
+                                /> : view === 'grid' ?
+                                    [listDocuments?.map(itemDocuments =>
+<<<<<<< HEAD
+                                        <ItemDocumentsGrid itemDocuments={itemDocuments} role={role}/>
+                                    )]
+                                    : [listDocuments?.map(itemDocuments =>
+                                        <Grid item xs={12}>
+                                            <ItemDocumentsLine itemDocuments={itemDocuments} role={role}/>
+=======
+                                        <ItemDocumentsGrid key={itemDocuments.id} itemDocuments={itemDocuments}/>
+                                    )]
+                                    : [listDocuments?.map(itemDocuments =>
+                                        <Grid item xs={12}>
+                                            <ItemDocumentsLine key={itemDocuments.id} itemDocuments={itemDocuments}/>
+>>>>>>> origin/fixes
+                                        </Grid>
+                                    )]
+                            :<Typography style={{marginLeft:'25px'}} className={classesMain.Text}>Нет справок</Typography>
+                        }
+                    </CustomTabPanel>
+                }
+            </CustomTab>
+        </MainDocuments>
+    );
+}
+
+export default DocumentsForEmployeeDean;

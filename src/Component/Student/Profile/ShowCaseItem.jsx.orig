@@ -1,0 +1,300 @@
+import React, {useEffect, useState} from 'react';
+import {CardActionArea, Grid, Pagination} from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
+import CardMedia from "@mui/material/CardMedia";
+<<<<<<< HEAD
+import pdf from "../../../Assets/Image/Portfolio/pdf.svg";
+=======
+import pdf from "../../../Image/Portfolio/pdf.svg";
+import Image from "../../../Image/Profile/defaultShowCase.svg"
+>>>>>>> origin/profile
+import CardContent from "@mui/material/CardContent";
+import {MenuItem, Typography} from "@material-ui/core";
+import Card from "@mui/material/Card";
+import {useSnackbar} from "notistack";
+import useStylesPortfolio from "../../../Styles/PortfolioStyles";
+import useStylesMain from "../../../Styles/MainStyles";
+import CustomModal from "../../UI/CustomModal/CustomModal";
+import Box from "@mui/material/Box";
+
+import CloseIcon from "@mui/icons-material/Close";
+import api from "../../../Services/api";
+import CustomDialog from "../../UI/CustomDialog/CustomDialog";
+import {useParams} from "react-router-dom";
+import Cookies from "js-cookie";
+
+function ShowCaseItem({item, defaultImage, categoryId, setItems,items, image}) {
+    const { enqueueSnackbar } = useSnackbar();
+    const classesPortfolio = useStylesPortfolio()
+    const classesMain = useStylesMain()
+    const [modal, setModal] = useState(false)
+    const [hover, setHover] = useState(false)
+    const [showCaseModalOpen, setShowCaseModalOpen] = useState(false)
+    const [dialogContent, setDialogContent] = useState({title:'',content:''})
+    const [handleDialog, setHandleDialog] = useState(false)
+
+
+    const [loading, setLoading]=useState(false)
+    const [isPdf, setIsPdf] = useState()
+    const [count, setCount] = useState()
+    const [countFromBackend, setCountFromBackend] = useState()
+    const [countDocument, setCountDocument] = useState(3)
+    const [page, setPage] = useState(1)
+    const [showCaseAchievements, setShowCaseAchivements] = useState([])
+
+
+    const params = useParams()
+    const userId = params.userId
+    async function downloadFile(item) {
+        const File = item.file
+        console.log(File)
+        const FormatFile = File.slice(File.indexOf('/')+1,File.indexOf(';'))
+
+        enqueueSnackbar(`Скачивание файла ${item.name}.${FormatFile}`,{ autoHideDuration: 3500, variant:'info' });
+        const FileSaver = require('file-saver');
+        const base64Response = await fetch(File);
+        const blob = await base64Response.blob();
+        FileSaver.saveAs(blob, `${item.name}.${FormatFile}`);
+    }
+    const showCaseModal = ()=>{
+        setShowCaseModalOpen(true)
+        setLoading(true)
+        getCountAchievements().then((response)=>{
+            setCountFromBackend(response)
+            setCount(Math.ceil(Number(response) / countDocument))
+        })
+        getListAchievementsByUser().then((response)=>{
+            setShowCaseAchivements(response)
+            setLoading(false)
+        })
+    }
+    const removeAchievement = () =>{
+        setDialogContent({method:'del',title: 'Удаление информации', content: 'Вы действительно хотите удалить достижение?'})
+        setHandleDialog(true)
+    }
+    const delAchievement = async ()=>{
+        setItems(items.filter(el => el.id !== item.id))
+        await api.portfolio.deleteShowCase(item.id, userId)
+
+    }
+    const confirmEditAchievement = async () =>{
+        console.log('hui')
+
+        if(dialogContent.method ==='edit'){
+            return
+        }
+        else if(dialogContent.method === 'del'){
+            delAchievement()
+        }
+
+    }
+    
+
+
+    const getListAchievementsByUser = async ()=>{
+        const {data: ListAchievementsByUser} = await api.portfolio.getListAchievementsByUser(userId, page, countDocument, categoryId);
+        setLoading(false)
+        return ListAchievementsByUser
+    }
+    const getCountAchievements = async ()=>{
+        const {data: Count} = await api.portfolio.getCountAchivements(userId, categoryId)
+        return Count
+    }
+    const handleChangePagination = async (event, value) => {
+        setPage(value)
+        console.log(value)
+
+    }
+    async function downloadFile(itemAchievements) {
+        const File = itemAchievements.file
+        console.log(File)
+        const FormatFile = File.slice(File.indexOf('/')+1,File.indexOf(';'))
+
+        enqueueSnackbar(`Скачивание файла ${itemAchievements.name}.${FormatFile}`,{ autoHideDuration: 3500, variant:'info' });
+        const FileSaver = require('file-saver');
+        const base64Response = await fetch(File);
+        const blob = await base64Response.blob();
+        FileSaver.saveAs(blob, `${itemAchievements.name}.${FormatFile}`);
+    }
+
+    useEffect(async () => {
+        setCount(Math.ceil(Number(countFromBackend) / countDocument))
+    }, [countDocument]);
+
+    const addToShowCase = async(itemAchievements) =>{
+        await api.portfolio.postShowCase({token:Cookies.get("auth-token"), documentId:itemAchievements.id}, userId)
+        const {data:ShowCaseAchievements} = await api.portfolio.getShowCase(userId)
+        setShowCaseAchivements([])
+        setShowCaseModalOpen(false)
+        setItems(ShowCaseAchievements)
+
+    }
+    return (
+        <>
+            <CustomDialog
+                title={dialogContent.title}
+                content={dialogContent.content}
+                open={handleDialog}
+                setOpen={setHandleDialog}
+                onConfirm={confirmEditAchievement}
+            />
+        {
+            !defaultImage?
+                <>
+
+                    <CustomModal
+                        open={modal}
+                        handleClose={()=>setModal(false)}
+                    >
+                        <Box className={classesPortfolio.EditAchievements}>
+                            <Grid container
+                                  direction="row"
+                                  justifyContent="center"
+                                  alignItems="center"
+                                  spacing={3}>
+                                <Grid item xs={6}>
+                                    <DownloadIcon className={classesMain.IconForDocument}
+                                                  onClick={downloadFile}/>
+                                    <img className={classesPortfolio.ShowMoreImg}
+                                         src={item.file.slice(item.file.indexOf('/')+1, item.file.indexOf(';')) ==='pdf'?pdf: item.file}
+                                         alt={'achievement'}
+                                         style={{marginTop: '0 !important'}}/>
+
+                                </Grid>
+                                <Grid item style={{display:'flex', justifyContent:'flex-start', flexDirection:'column', alignItems:'flex-start'}} xs={6}>
+
+                                    <Typography variant={'h6'} style={{textAlign:'left',maxWidth:'300px', overflowWrap:'break-word'}} className={classesMain.Text}>Наименование: {item.name}</Typography>
+                                    <Typography variant={'h6'} style={{textAlign:'left',maxWidth:'300px', overflowWrap:'break-word'}} className={classesMain.Text}>Категория: {item.category}</Typography>
+                                    <Typography variant={'h6'} style={{textAlign:'left',maxWidth:'300px', overflowWrap:'break-word'}} className={classesMain.Text}>Описание: {item.description}</Typography>
+                                </Grid>
+                            </Grid>
+
+                        </Box>
+                    </CustomModal>
+                <Card  sx={{width:'320px', height:'100%'}} className={classesPortfolio.cardMobile}>
+                    <CardActionArea>
+                        <div style={{position:'relative', height:'320px'}}>
+                            <DownloadIcon  className={[classesMain.IconForDocument, classesPortfolio.DownloadButton].join(' ')}
+                                           onClick={()=>downloadFile(item)}/>
+                            <CardMedia onClick={()=>setModal(true)}
+                                style={{
+                                    transition: 'transform 0.25s',
+                                    height:'320px'
+                                }}
+                                component="img"
+                                image={item.file.slice(item.file.indexOf('/')+1, item.file.indexOf(';')) ==='pdf'?pdf: item.file}
+                                alt="IMAGE"
+                            />
+                        </div>
+                        <div onClick={removeAchievement}
+                             className={classesPortfolio.removeAchievement}>
+                            <CloseIcon/>
+                        </div>
+                        <CardContent onClick={()=>setModal(true)}
+                            className={classesPortfolio.CardContent}>
+                            <Typography  gutterBottom
+                                         variant="h5" component="div">
+                                {item.name}
+                            </Typography>
+                            <Typography
+                                variant="body2" >
+                                {item.description}
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+                </>
+                :
+                // <Card sx={{width:'320px', height:'100%'}} className={classesPortfolio.cardMobile}>
+                //     <CardActionArea>
+                //         <div style={{position:'relative', height:'320px'}}>
+                //
+                //             <CardMedia
+                //                 style={{
+                //                     transition: 'transform 0.25s',
+                //                     height:'320px'
+                //                 }}
+                //                 component="img"
+                //                 image={defaulImage}
+                //                 alt="IMAGE"
+                //             />
+                //         </div>
+                //
+                //         <CardContent
+                //             className={classesPortfolio.CardContent}
+                //         style={{height:'92px'}}
+                //         >
+                //         </CardContent>
+                //     </CardActionArea>
+                // </Card>
+                <>
+                    <CustomModal ModalClassName={classesPortfolio.ShowCaseModal} handleClose={()=>setShowCaseModalOpen(false)} open={showCaseModalOpen}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Typography align={'center'} style={{color:'darkgrey'}}>
+                                    Кликните на достижение для выбора на витрину
+                                </Typography>
+                            </Grid>
+                            {
+                                showCaseAchievements.map(itemAchievements=>
+                                    <Grid style={{margin:'20px'}} item xl={3} xs={12} md={5}>
+
+                                        <Card onClick={()=>addToShowCase(itemAchievements)} sx={{maxWidth:'250px', minWidth:'250px', }} className={classesPortfolio.cardMobile}>
+                                            <CardActionArea>
+                                                <div style={{position:'relative'}}>
+                                                    <DownloadIcon  className={[classesMain.IconForDocument, classesPortfolio.DownloadButton].join(' ')}
+                                                                   onClick={downloadFile}/>
+                                                    <CardMedia
+                                                        className={classesPortfolio.ShowCaseCardImage}
+                                                        component="img"
+                                                        image={isPdf?pdf: itemAchievements.file}
+                                                        alt="IMAGE"
+                                                    />
+                                                </div>
+
+
+
+                                                <CardContent
+                                                    className={classesPortfolio.CardContent}>
+                                                    <Typography  gutterBottom
+                                                                 variant="h5" component="div">
+                                                        {itemAchievements.name}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body2" >
+                                                        {itemAchievements.description}
+                                                    </Typography>
+                                                </CardContent>
+                                            </CardActionArea>
+                                        </Card>
+                                    </Grid>
+
+                                )
+                            }
+                            <Grid item xs={12}>
+                                <Pagination
+                                    page={page}
+                                    boundaryCount={2}
+                                    style={{width: '100%'}}
+                                    count={count}
+                                    onChange={handleChangePagination}
+                                    variant="outlined"
+                                    shape="rounded"
+                                    showFirstButton
+                                    showLastButton/>
+                            </Grid>
+                        </Grid>
+
+                    </CustomModal>
+                    <div onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} onClick={showCaseModal} className={classesPortfolio.showCaseDefault}>
+                        <img src={image}  className={classesPortfolio.showCaseDefaultImage}/>
+                    </div>
+                </>
+
+        }
+        </>
+
+    );
+}
+
+export default ShowCaseItem;

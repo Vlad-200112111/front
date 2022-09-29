@@ -1,0 +1,28 @@
+import {FormControl, InputLabel, Grid, Select} from "@material-ui/core";
+
+const CustomSelect = ({xs,contentCustomSelect, nameCustomSelect, valueSelect,setValueSelect, children, restProps}) => {
+    return (
+        <>
+            <Grid style={{width: '100%'}} item xs={xs}>
+                <FormControl fullWidth={true} variant="filled">
+                    <InputLabel id="customSelect">{contentCustomSelect}</InputLabel>
+                    <Select
+                        {...restProps}
+                        disabled={props.disabled}
+                        labelId="customSelect"
+                        name={nameCustomSelect}
+                        fullWidth={true}
+                        value={valueSelect}
+                        onChange={setValueSelect}
+                    >
+                        {
+                            children
+                        }
+                    </Select>
+                </FormControl>
+            </Grid>
+        </>
+    )
+}
+
+export default CustomSelect

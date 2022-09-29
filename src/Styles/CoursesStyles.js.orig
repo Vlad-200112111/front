@@ -1,0 +1,36 @@
+import React from 'react'
+import {makeStyles} from "@material-ui/core";
+
+
+const useStylesCourses = makeStyles((theme) => ({
+
+            controlPanel: {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+            },
+            cardForCourses: {
+                position: 'relative',
+                height: '100%'
+            },
+            cardContentForCourses: {
+<<<<<<< HEAD
+                maxHeight: '200px',
+                minHeight: '200px',
+            }
+
+=======
+                marginBottom: '15%',
+                height: '80%'
+            },
+            cardActions: {
+                position: 'absolute',
+                bottom: 0,
+                width: '100%'
+            }
+>>>>>>> origin/olympiads
+        }
+    )
+);
+
+export default useStylesCourses;

@@ -1,0 +1,17 @@
+import axios from "../axios";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth-token");
+
+const endpoints = {
+<<<<<<< HEAD
+  login: (data) => axios.post("Authorization/api/v1/AUser", data),
+  assigningRole: (data) => axios.post("Authorization/api/v1/ARole/RoleSelection", data),
+  getAssigningRole: (data) => axios.post("Authorization/api/v1/ARole/GetSelectedRoles", data),
+  getProfile: (userId) => axios.get("Authorization/api/v1/APerson", {params: {userId: userId, token: token}}),
+=======
+  login: (data) => axios.post("Authorization/api/v1/AUser", data).catch(() => {return "ERROR"}),
+  getProfile: () => axios.get("Authorization/api/v1/auth/me"),
+>>>>>>> origin/fixes
+};
+
+export default endpoints;

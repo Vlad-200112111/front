@@ -1,0 +1,231 @@
+import {useState, useEffect} from "react";
+import {
+    Grid,
+    makeStyles,
+    Typography,
+
+} from "@material-ui/core";
+import {
+    Box,
+    Tab
+} from '@mui/material';
+import {
+    TabContext,
+    TabList,
+    TabPanel
+} from '@mui/lab';
+import axios from "axios";
+import Cookies from "js-cookie";
+
+import FormForAcademicPerformance from './FormForAcademicPerformance';
+
+const useStyles = makeStyles((theme) => ({
+    backgroundMain: {
+        padding: '1rem',
+        background: 'rgba(90, 125, 207, 0.8)',
+        backdropFilter: 'blur(10)'
+    },
+    Title: {
+        color: '#fff',
+        fontWeight: 700,
+        display: 'flex',
+        justifyContent: 'center',
+        fontSize: '2.5rem',
+        lineHeight: '91.02%',
+        padding: '20px 0 50px 0'
+    },
+    Select: {
+
+        '& label.Mui-focused': {
+            color: 'green',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#fff',
+        },
+
+        background: '#fff !important',
+        color: '#000',
+        padding: '5px 10px ',
+
+    },
+    SelectItems: {
+        color: '#000'
+    },
+    Pagination: {
+        root: {
+            "& > *": {
+                marginTop: theme.spacing(2)
+            },
+            "& .MuiPaginationItem-icon": {
+                backgroundColor: "yellow"
+            }
+        }
+    }
+
+}));
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 'auto',
+    minWidth: '40rem',
+    bgcolor: 'rgba(149, 171, 221, 0.7)',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
+function AcademicPerformance() {
+    const classes = useStyles();
+    const token = Cookies.get("auth-token");
+    const userId = Cookies.get("userId");
+
+<<<<<<< HEAD
+=======
+    const [valueTab, setValueTab] = useState(1533);
+>>>>>>> origin/profile_fix
+    const [listSemester, setListSemester] = useState([]);
+    const [listGroups, setListGroups] = useState([]);
+    const [valueTab, setValueTab] = useState('1');
+
+    const handleChange = (event, newValue) => {
+        setValueTab(newValue);
+    };
+
+    useEffect(() => {
+
+        axios.get(`https://cabinet.zabgu.ru/EducationalProcess/api/v1/Student/GroupStudent`,
+            {
+                params: {
+                    userId: userId,
+                    token: token
+                }
+            }
+        ).then(
+<<<<<<< HEAD
+            response => {
+                setListGroups(response.data)
+                setValueTab(response.data[0].groupId)
+                getSemester(response.data[0].groupId)
+            }
+=======
+            response => {setListGroups(response.data)
+            console.log(listGroups[0].groupId, 'grop')}
+
+>>>>>>> origin/profile_fix
+        ).catch(
+            function (error) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+            }
+        )
+    }, []);
+
+
+    function getSemester(groupId) {
+        const objectSemester = new Object()
+
+        objectSemester.groupId = groupId
+        objectSemester.token = token
+        objectSemester.userId = userId
+
+        axios.post(`https://cabinet.zabgu.ru/StudentProgressService/api/v1/MarkStudent/Semestr`,
+            objectSemester,
+            {
+                headers: {
+                    'Content-Type': "application/json;charset=UTF-8",
+                    'Access-Control-Allow-Origin': true,
+                    'Access-Control-Request-Headers': 'Content-Type, x-requested-with',
+                }
+            }
+        ).then(
+            response => {
+                for (let i = 0; i < response.data.length; i++) {
+                    for (let j = 0; j < response.data.length; j++) {
+                        if (response.data[i].id === response.data[j].id) {
+                            setListSemester(response.data)
+                            break
+                        }
+                    }
+                }
+            }
+        ).catch(
+            function (error) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log(error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+            }
+        )
+
+
+    };
+
+    return (
+        <div>
+            <Grid maxWidth="xs" className={classes.backgroundMain}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Typography className={classes.Title} variant="h1">Успеваемость</Typography>
+                    </Grid>
+                </Grid>
+
+                <Box sx={{width: '100%', typography: 'body1'}}>
+                    <TabContext value={valueTab}>
+                        <Box sx={{color: '#fff', padding: '0 24px'}}>
+                            <TabList variant="fullWidth"
+                                     TabIndicatorProps={{sx: {bgcolor: "rgb(255 152 69)", height: '4px'}}}
+                                     textColor="inherit" className={classes.Tabs}
+                                     sx={{background: 'rgba(33, 50, 89, 0.19)'}} onChange={handleChange}
+                                     aria-label="lab API tabs example">
+
+
+                                {/*ЦИКЛ*/}
+                                {
+                                    listGroups.map(item =>
+                                        <Tab className="myTab"
+                                             sx={valueTab == item.groupId ? {background: 'rgba(33, 50, 89, 0.6)'} : {background: 'none'}}
+                                             label={item.groupName} value={item.groupId}/>
+                                    )
+                                }
+                                {/*ЦИКЛ*/}
+
+
+                            </TabList>
+
+                        </Box>
+
+                        {
+                            listGroups.map(item =>
+                                <TabPanel value={item.groupId}>
+                                    <FormForAcademicPerformance userId={userId} listSemester={listSemester}
+                                                                token={token} classes={classes} idGroup={item.groupId}/>
+                                </TabPanel>
+                            )
+                        }
+
+                    </TabContext>
+
+
+                </Box>
+
+            </Grid>
+        </div>
+    )
+}
+
+export default AcademicPerformance;

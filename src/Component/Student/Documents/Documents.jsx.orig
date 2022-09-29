@@ -1,0 +1,874 @@
+<<<<<<< HEAD
+// import {useState, useEffect} from "react";
+// import {useForm} from "react-hook-form";
+// import {
+//     MenuItem, Typography, FormControl
+// } from "@material-ui/core";
+// import {yupResolver} from "@hookform/resolvers/yup";
+// import validationSchema from "./validation";
+// import {
+//     Grid, InputLabel, Pagination, Select, Stack,
+//     Tab, ToggleButton, ToggleButtonGroup
+// } from '@mui/material';
+// import Cookies from "js-cookie";
+// import ItemDocumentsGrid from "../../General/Document/Document/Item/ItemDocumentsGrid";
+// import useStylesMain from "../../../Styles/MainStyles";
+// import CustomModal from "../../UI/CustomModal/CustomModal";
+// import CustomSelect from "../../UI/CustomSelect/CustomSelect";
+// import api from "./../../../Services/api";
+// import MainDocuments from "../../Modules/MainDocuments";
+// import CustomTab from "../../UI/CustomTab/CustomTab";
+// import CustomTabPanel from "../../UI/CustomTabPanel/CustomTabPanel";
+// import CustomButton from "../../UI/CustomButton/CustomButton";
+// import CustomFormGenerator from "../../UI/CustomFormGenerator/CustomFormGenerator";
+// import documentById from "../../General/Document/Document/DocumentById";
+// import ClickAwayButton from "../../UI/СlickAwayButton/ClickAwayButton";
+// import FilterListIcon from "@mui/icons-material/FilterList";
+// import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
+// import GridViewIcon from "@mui/icons-material/GridView";
+// import React from "react";
+// import ItemDocumentsLine from "../../General/Document/Document/Item/ItemDocumentsLine";
+// import CustomAutocomplete from "../../UI/CustomAutocomplete/CustomAutocomplete";
+// import CircularProgress from "@mui/material/CircularProgress";
+// import CustomTextarea from "../../UI/CustomTextarea/CustomTextarea";
+// import ItemDocumentsGridArchive from "../../General/Document/Archive/Item/ItemDocumentsGridArchive";
+// import ItemDocumentsLineArchive from "../../General/Document/Archive/Item/ItemDocumentsLineArchive";
+// import Fade from '@mui/material/Fade';
+// import CustomAlert from "../../UI/CustomAlert/CustomAlert";
+// import DocumentsModal from "../../General/Document/Component/DocumentsModal";
+// import DocumentControlPanel from "../../General/Document/Component/DocumentControlPanel";
+//
+//
+// function Documents() {
+//     const classesMain = useStylesMain();
+//     const token = Cookies.get("auth-token");
+//     const userId = Cookies.get("userId");
+//     const [view, setView] = useState('grid')
+//     const [chosenType, setChosenType] = useState({})
+//     const [listTypes, setListTypes] = useState([]);
+//     const [listArchive, setListArchive] = useState([]);
+//     const [listGroups, setListGroups] = useState([]);
+//     const [listDocuments, setListDocuments] = useState([]);
+//     const [open, setOpen] = useState(false);
+//     const [typeDocumentId, setTypeDocumentId] = useState('');
+//     const [limitTypesDocument, setLimitTypesDocument] = useState('');
+//     const [listModelDocument, setListModelDocument] = useState([]);
+//     const [loadingDocuments, setLoadingDocuments] = useState(false)
+//
+//     const [countFromBackend, setCountFromBackend] = useState()
+//     const [count, setCount] = useState()
+//     const [countDocument, setCountDocument] = useState(6)
+//     const [page, setPage] = useState(1)
+//
+//     // const [countFromBackendArchive, setCountFromBackendArchive] = useState()
+//     // const [countArchive, setCountArchive] = useState()
+//     // const [countDocumentArchive, setCountDocumentArchive] = useState(6)
+//     const [pageArchive, setPageArchive] = useState(1)
+//
+//     const [pageForEmployee, setPageForEmployee] = useState(1)
+//
+//
+//     const [countFromBackendArchive, setCountFromBackendArchive] = useState()
+//     const [countArchive, setCountArchive] = useState()
+//     const [countDocumentArchive, setCountDocumentArchive] = useState(6)
+//     const [pageArchiveForEmployee, setPageArchiveForEmployee] = useState(1)
+//
+//
+//     const [pageOnCheck, setPageOnCheck] = useState(1)
+//
+//     const [fade, setFade] = useState(true)
+//     const [role, setRole] = useState('')
+//
+//
+//     useEffect(async () => {
+//         const object = new Object()
+//         object.token = Cookies.get("auth-token")
+//         const {data: Result} = await api.auth.getAssigningRole(object)
+//         setRole(Result.role)
+//
+//         const {data: count} = await api.documents.getCountDocument()
+//         setCountFromBackend(count)
+//         setCount(Math.ceil(Number(count) / countDocument))
+//
+//         const {data: countArchive} = await api.documents.getCountDocumentArchive()
+//         setCountFromBackendArchive(countArchive)
+//         setCountArchive(Math.ceil(Number(countArchive) / countDocumentArchive))
+//     }, [userId]);
+//
+//     useEffect(async () => {
+//         setCount(Math.ceil(Number(countFromBackend) / countDocument))
+//     }, [countDocument]);
+//
+//     useEffect(async () => {
+//         setCountArchive(Math.ceil(Number(countFromBackendArchive) / countDocumentArchive))
+//     }, [countDocumentArchive]);
+//
+//     useEffect(async () => {
+//         setLoadingDocuments(true)
+//
+//         const {data: ListDocuments} = await api.documents.getListDocuments(page, countDocument);
+//         if (Array.isArray(ListDocuments)) {
+//             setListDocuments(ListDocuments.reverse())
+//         } else {
+//             setListDocuments(ListDocuments)
+//         }
+//         setLoadingDocuments(false)
+//     }, [page]);
+//
+//     useEffect(async () => {
+//         const {data: Archive} = await api.documents.getArchive(page, countDocument);
+//         if (Array.isArray(Archive)) {
+//             setListArchive(Archive.reverse())
+//         } else {
+//             setListArchive(Archive)
+//         }
+//     }, [pageArchive]);
+//
+//     useEffect(async () => {
+//         const {data: Archive} = await api.documents.getListDocumentsFromEmployer(page, countDocument);
+//         if (Array.isArray(Archive)) {
+//             setListArchive(Archive.reverse())
+//         } else {
+//             setListArchive(Archive)
+//         }
+//     }, [pageForEmployee]);
+//
+//     useEffect(async () => {
+//         const {data: Archive} = await api.documents.getEmployerArchive(page, countDocument);
+//         if (Array.isArray(Archive)) {
+//             setListArchive(Archive.reverse())
+//         } else {
+//             setListArchive(Archive)
+//         }
+//     }, [pageArchiveForEmployee]);
+//
+//     const [TabList, setTabList] = useState([
+//         {id: '1', categoryName: 'Заказанные справки'},
+//         {id: '2', categoryName: 'Архив'},
+//         {id: '3', categoryName: 'Справки на проверку'},
+//     ])
+//
+//
+//     const filterByType = async () => {
+//         const {data: ListDocumentsByType} = await api.documents.getListDocumentsByTypeIdForStudent(chosenType?.id)
+//         if (Array.isArray(ListDocumentsByType)) {
+//             setListDocuments(ListDocumentsByType.reverse())
+//         } else {
+//             setListDocuments('')
+//         }
+//     }
+//
+//     const resetFilter = async () => {
+//         const {data: ListDocuments} = await api.documents.getListDocuments()
+//         if (Array.isArray(ListDocuments)) {
+//             setListDocuments(ListDocuments.reverse())
+//         } else {
+//             setListDocuments(ListDocuments)
+//         }
+//     }
+//
+//     const handleChangePagination = async (event, value) => {
+//         setFade(false)
+//         setPage(value)
+//
+//         window.scroll({
+//             left: 0,
+//             top: 0,
+//             behavior: 'smooth'
+//         })
+//         setFade(true)
+//
+//     };
+//
+//     const handleChangePaginationArchive = async (event, value) => {
+//         setFade(false)
+//         setPageArchive(value)
+//
+//         window.scroll({
+//             left: 0,
+//             top: 0,
+//             behavior: 'smooth'
+//         })
+//         setFade(true)
+//     };
+//
+//
+//
+//     return (
+//         <MainDocuments>
+//
+//             <DocumentsModal
+//                 open={open}
+//                 setOpen={setOpen}
+//                 resetFilter={resetFilter}
+//                 setListDocuments={setListDocuments}
+//                 setChosenType={setChosenType}
+//             />
+//
+//             <CustomTab firstTab={"1"}>
+//
+//                 {
+//                     TabList.map(item=>
+//                         role === 'Студент' && item.id === '3' ? '' :
+//                             <Tab
+//                                 key={item.id}
+//                                 className={classesMain.TabsItems}
+//                                 label={<div className={classesMain.TabItemText}>{item.categoryName}</div>}
+//                                 value={item.id}/>
+//                     )
+//                 }
+//
+//
+//                 {/*<DocumentControlPanel*/}
+//                 {/*    setOpen={setOpen}*/}
+//                 {/*    setCountDocument={setCountDocument}*/}
+//                 {/*    countDocument={countDocument}*/}
+//                 {/*    setPage={setPage}*/}
+//                 {/*    setPageArchive={setPageArchive}*/}
+//                 {/*    chosenType={chosenType}*/}
+//                 {/*    listTypes={listTypes}*/}
+//                 {/*    setChosenType={setChosenType}*/}
+//                 {/*    filterByType={filterByType}*/}
+//                 {/*    resetFilter={resetFilter}*/}
+//                 {/*    view={view}*/}
+//                 {/*    setView={setView}*/}
+//                 {/*    setPageOnCheck={setPageOnCheck}*/}
+//                 {/*/>*/}
+//
+//
+//                 {
+//                     TabList.map(itemCategories =>
+//                         <>
+//                             {
+//                                 role === 'Студент' && itemCategories.id === '3' ? '' :
+//                                     <CustomTabPanel
+//                                         className={classesMain.TabsPanelMobile}
+//                                         rowSpacing={1}
+//                                         key={itemCategories.id}
+//                                         columnSpacing={{xs: 1, sm: 2, md: 3}}
+//                                         value={itemCategories.id}>
+//
+//
+//                                         {/*??????????????????????????????????????????????????????????????????????????????*/}
+//                                         <DocumentControlPanel
+//                                             setOpen={setOpen}
+//                                             setCountDocument={setCountDocument}
+//                                             countDocument={countDocument}
+//                                             setPage={setPage}
+//                                             setPageArchive={setPageArchive}
+//                                             chosenType={chosenType}
+//                                             listTypes={listTypes}
+//                                             setChosenType={setChosenType}
+//                                             filterByType={filterByType}
+//                                             resetFilter={resetFilter}
+//                                             view={view}
+//                                             setView={setView}
+//                                             setPageOnCheck={setPageOnCheck}
+//                                         />
+//                                         {/*??????????????????????????????????????????????????????????????????????????????*/}
+//
+//                                         {
+//                                             itemCategories.id === "1" ?
+//
+//
+//                                                 listDocuments === 'Нет справок' ?
+//                                                     <>
+//                                                         <CustomAlert
+//                                                             severity="info"
+//                                                             title='Информация!'
+//                                                             content='Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст '
+//                                                             activeAlert={true}
+//                                                         />
+//                                                     </>
+//                                                     : loadingDocuments ?
+//
+//
+//                                                         <Grid item
+//                                                               style={{
+//                                                                   marginLeft: 'auto',
+//                                                                   marginRight: 'auto',
+//                                                                   marginTop: 100
+//                                                               }}>
+//                                                             <CircularProgress/>
+//                                                         </Grid>
+//                                                         :
+//                                                         <>
+//                                                             <>
+//                                                                 {
+//                                                                     view === 'grid' ?
+//                                                                         <>
+//                                                                             {
+//                                                                                 listDocuments?.map((itemDocuments, index) =>
+//
+//                                                                                     <ItemDocumentsGrid
+//                                                                                         fade={fade}
+//                                                                                         timeout={index * 200}
+//                                                                                         userId={Cookies.get("userId")}
+//                                                                                         key={itemDocuments.id}
+//                                                                                         itemDocuments={itemDocuments}
+//                                                                                         role={role}/>
+//                                                                                 )
+//                                                                             }
+//                                                                         </>
+//
+//                                                                         :
+//
+//                                                                         listDocuments?.map(itemDocuments =>
+//                                                                             <Grid key={itemDocuments.id} item xs={12}>
+//                                                                                 <ItemDocumentsLine
+//                                                                                     userId={Cookies.get("userId")}
+//                                                                                     itemDocuments={itemDocuments}
+//                                                                                     role={role}/>
+//                                                                             </Grid>
+//                                                                         )
+//                                                                 }
+//                                                             </>
+//                                                             <>
+//                                                                 <Pagination
+//                                                                     page={page}
+//                                                                     boundaryCount={2}
+//                                                                     style={{width: '100%'}}
+//                                                                     count={count}
+//                                                                     onChange={handleChangePagination}
+//                                                                     variant="outlined"
+//                                                                     shape="rounded"
+//                                                                     showFirstButton
+//                                                                     showLastButton/>
+//                                                             </>
+//                                                         </>
+//
+//
+//                                                 : itemCategories.id === "2" ?
+//                                                     <>
+//                                                         {
+//                                                             listArchive === 'Нет справок' ?
+//                                                                 <>
+//                                                                     <CustomAlert
+//                                                                         severity="info"
+//                                                                         title='Информация!'
+//                                                                         content='Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст '
+//                                                                         activeAlert={true}
+//                                                                     />
+//                                                                 </>
+//                                                                 : loadingDocuments ?
+//
+//
+//                                                                     <Grid item
+//                                                                           style={{
+//                                                                               marginLeft: 'auto',
+//                                                                               marginRight: 'auto',
+//                                                                               marginTop: 100
+//                                                                           }}>
+//                                                                         <CircularProgress/>
+//                                                                     </Grid>
+//                                                                     :
+//                                                                     <>
+//                                                                         <>
+//                                                                             {
+//                                                                                 view === 'grid' ?
+//                                                                                     <>
+//                                                                                         {
+//                                                                                             listArchive?.map(itemArchive =>
+//                                                                                                 <ItemDocumentsGridArchive
+//                                                                                                     userId={Cookies.get("userId")}
+//                                                                                                     key={itemArchive.id}
+//                                                                                                     itemArchive={itemArchive}
+//                                                                                                     role={role}/>
+//                                                                                             )
+//                                                                                         }
+//                                                                                     </>
+//
+//                                                                                     :
+//                                                                                     listArchive?.map(itemArchive =>
+//                                                                                         <Grid key={itemArchive.id} item
+//                                                                                               xs={12}>
+//                                                                                             <ItemDocumentsLineArchive
+//                                                                                                 userId={Cookies.get("userId")}
+//                                                                                                 itemArchive={itemArchive}
+//                                                                                                 role={role}/>
+//                                                                                         </Grid>
+//                                                                                     )
+//                                                                             }
+//                                                                         </>
+//                                                                         <>
+//                                                                             <Pagination
+//                                                                                 page={pageArchive}
+//                                                                                 boundaryCount={2}
+//                                                                                 style={{width: '100%'}}
+//                                                                                 count={countArchive}
+//                                                                                 onChange={handleChangePaginationArchive}
+//                                                                                 variant="outlined"
+//                                                                                 shape="rounded"
+//                                                                                 showFirstButton
+//                                                                                 showLastButton/>
+//                                                                         </>
+//                                                                     </>
+//                                                         }
+//                                                     </>
+//
+//
+//                                                     : itemCategories.id === "3" ?
+//
+//                                                         <>
+//
+//                                                         </>
+//
+//                                                         : ''
+//                                         }
+//
+//
+//                                     </CustomTabPanel>
+//                             }
+//                         </>
+//                     )
+//                 }
+//
+//             </CustomTab>
+//         </MainDocuments>
+//     );
+// }
+//
+// export default Documents;
+=======
+import {useState, useEffect} from "react";
+import {useForm} from "react-hook-form";
+import {
+    MenuItem, Typography, FormControl
+} from "@material-ui/core";
+import {yupResolver} from "@hookform/resolvers/yup";
+import validationSchema from "./validation";
+import {
+    Grid, InputLabel, Pagination, Select, Stack,
+    Tab, ToggleButton, ToggleButtonGroup
+} from '@mui/material';
+import Cookies from "js-cookie";
+import ItemDocumentsGrid from "../../General/Document/Document/Item/ItemDocumentsGrid";
+import useStylesMain from "../../../Styles/MainStyles";
+import CustomModal from "../../UI/CustomModal/CustomModal";
+import CustomSelect from "../../UI/CustomSelect/CustomSelect";
+import api from "./../../../Services/api";
+import MainDocuments from "../../Modules/MainDocuments";
+import CustomTab from "../../UI/CustomTab/CustomTab";
+import CustomTabPanel from "../../UI/CustomTabPanel/CustomTabPanel";
+import CustomButton from "../../UI/CustomButton/CustomButton";
+import CustomFormGenerator from "../../UI/CustomFormGenerator/CustomFormGenerator";
+import documentById from "../../General/Document/Document/DocumentById";
+import ClickAwayButton from "../../UI/СlickAwayButton/ClickAwayButton";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ViewHeadlineIcon from "@mui/icons-material/ViewHeadline";
+import GridViewIcon from "@mui/icons-material/GridView";
+import React from "react";
+import ItemDocumentsLine from "../../General/Document/Document/Item/ItemDocumentsLine";
+import CustomAutocomplete from "../../UI/CustomAutocomplete/CustomAutocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
+import CustomTextarea from "../../UI/CustomTextarea/CustomTextarea";
+import ItemDocumentsGridArchive from "../../General/Document/Archive/Item/ItemDocumentsGridArchive";
+import ItemDocumentsLineArchive from "../../General/Document/Archive/Item/ItemDocumentsLineArchive";
+import Fade from '@mui/material/Fade';
+import CustomAlert from "../../UI/CustomAlert/CustomAlert";
+
+
+function Documents() {
+    const classesMain = useStylesMain();
+    const token = Cookies.get("auth-token");
+    const userId = Cookies.get("userId");
+    const [view, setView] = useState('grid')
+    const [chosenType, setChosenType] = useState({})
+    const [listTypes, setListTypes] = useState([]);
+    const [listArchive, setListArchive] = useState([]);
+    const [listGroups, setListGroups] = useState([]);
+    const [listDocuments, setListDocuments] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [typeDocumentId, setTypeDocumentId] = useState('');
+    const [comment, setComment] = useState('');
+    const [limitTypesDocument, setLimitTypesDocument] = useState('');
+    const [groupId, setGroupId] = useState('');
+    const [listModelDocument, setListModelDocument] = useState([]);
+    const [countFromBackend, setCountFromBackend] = useState()
+    const [count, setCount] = useState()
+    const [countDocument, setCountDocument] = useState(6)
+    const [page, setPage] = useState(1)
+    const [grow,setGrow] = useState(true)
+    const role = 'student'
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
+    useEffect(async () => {
+        const {data: ListTypes} = await api.documents.getListTypes();
+        setListTypes(ListTypes)
+        setChosenType(ListTypes[0])
+
+        const {data: count} = await api.documents.getCountDocument()
+        setCountFromBackend(count)
+        setCount(Math.ceil(Number(count) / countDocument))
+
+        const {data: ListGroups} = await api.educationalProcess.getListGroups();
+        setListGroups(ListGroups)
+        setGroupId(ListGroups.length === 1 ? ListGroups[0].groupId : '')
+
+        const {data: Archive} = await api.documents.getArchive();
+        if (Array.isArray(Archive)) {
+            setListArchive(Archive.reverse())
+        } else {
+            setListArchive([])
+        }
+    }, [userId]);
+
+    useEffect(async () => {
+        setCount(Math.ceil(Number(countFromBackend) / countDocument))
+    }, [countDocument]);
+
+    useEffect(async () => {
+        const {data: ListDocuments} = await api.documents.getListDocuments(page, countDocument);
+        if (Array.isArray(ListDocuments)) {
+            setListDocuments(ListDocuments.reverse())
+        } else {
+            setListDocuments(ListDocuments)
+        }
+    }, [page, countDocument]);
+
+
+    const {
+        control,
+        handleSubmit,
+        formState: {errors},
+        setError,
+    } = useForm({
+        resolver: yupResolver(validationSchema),
+    });
+
+    const handleChangeView = (event, newValue) => {
+        setView(newValue)
+    }
+
+    const [TabList, setTabList] = useState([
+        {id: '1', categoryName: 'Заказанные справки'},
+        {id: '2', categoryName: 'Архив'},
+    ])
+
+    async function changeSelectTypesDocuments(event, newValue) {
+        setTypeDocumentId(event.target.value)
+        const {data: LimitTypesDocument} = await api.documents.getProductionTimeDocument(event.target.value);
+        const {data: ModelDocument} = await api.documents.getModelDocument(event.target.value);
+        setListModelDocument(ModelDocument)
+        setLimitTypesDocument(LimitTypesDocument.preparationDays)
+    }
+
+    async function sendDocument(event) {
+        event.preventDefault()
+        resetFilter()
+        const formData = new FormData(event.target)
+        formData.append('token', token)
+        formData.append('documentTypeId', typeDocumentId)
+        formData.append('groupId', groupId)
+        formData.append('userId', userId)
+
+        let dataObj = [...formData].reduce((o, [k, v]) => {
+            o[k] = v;
+            return o;
+        }, {})
+
+        const {data: answer} = await api.documents.sendDocument(JSON.stringify(dataObj));
+        const {data: ListDocuments} = await api.documents.getListDocuments();
+        if (Array.isArray(ListDocuments)) {
+            setListDocuments(ListDocuments.reverse())
+        } else {
+            setListDocuments(ListDocuments)
+        }
+        setOpen(false)
+    }
+
+    const filterByType = async () => {
+        const {data: ListDocumentsByType} = await api.documents.getListDocumentsByTypeIdForStudent(chosenType?.id)
+        if (Array.isArray(ListDocumentsByType)) {
+            setListDocuments(ListDocumentsByType.reverse())
+        } else {
+            setListDocuments('')
+        }
+    }
+
+    const resetFilter = async () => {
+        const {data: ListDocuments} = await api.documents.getListDocuments()
+        if (Array.isArray(ListDocuments)) {
+            setListDocuments(ListDocuments.reverse())
+        } else {
+            setListDocuments(ListDocuments)
+        }
+    }
+
+    const handleChangePagination = async (event, value) => {
+        setGrow(false)
+        setPage(value)
+
+        window.scroll({
+            left: 0,
+            top: 0,
+            behavior: 'smooth'
+        })
+        const {data: ListDocuments} = await api.documents.getListDocuments(value, countDocument);
+        if (Array.isArray(ListDocuments)) {
+            setListDocuments(ListDocuments.reverse())
+        } else {
+            setListDocuments(ListDocuments)
+        }
+        setGrow(true)
+
+    };
+
+    return (
+        <MainDocuments>
+
+
+            <CustomModal
+                open={open}
+                handleClose={handleClose}
+                onSubmit={sendDocument}
+                title='Заказать справку'
+                button='Заказать справку'
+                buttonType='submit'>
+
+                <CustomSelect
+                    xs={8}
+                    contentCustomSelect="Группа"
+                    setValueSelect={(event) => setGroupId(event.target.value)}
+                    formHelperText={'Выберите группу.'}
+                    valueSelect={groupId}>
+                    {
+                        listGroups.map(item =>
+                            <MenuItem key={item.groupId} className={classesMain.SelectItems}
+                                      value={item.groupId}>{item.groupName}</MenuItem>
+                        )
+                    }
+                </CustomSelect>
+
+                <CustomSelect
+                    xs={8}
+                    contentCustomSelect="Тип справки"
+                    setValueSelect={changeSelectTypesDocuments}
+                    formHelperText={
+                        limitTypesDocument !== ''
+                            ? `Время изготовления занимает: ${limitTypesDocument} дней!`
+                            : 'Выберите тип справки.'
+                    }>
+                    {
+                        listTypes.map(item =>
+                            <MenuItem className={classesMain.SelectItems}
+                                      key={item.id}
+                                      value={item.id}>
+                                {item.typeName}
+                            </MenuItem>
+                        )
+                    }
+                </CustomSelect>
+
+
+                <CustomTextarea
+                    xs={8}
+                    nameCustomTextarea="Comment"
+                    label='Комментарий'
+                    setValueCustomTextarea={(event) => setComment(event.target.value)}
+                />
+
+                {documentById !== '' ?
+                    <CustomFormGenerator
+                        submitFunction={sendDocument}
+                        fields={listModelDocument}
+                        xs={8}
+                        typeId={typeDocumentId}
+                    >
+
+                    </CustomFormGenerator> : ''
+                }
+
+            </CustomModal>
+
+
+            <CustomTab
+                firstTab={"1"}>
+                {
+                    TabList.map(item =>
+                        <Tab
+                            key={item.id}
+                            className={classesMain.TabsItems}
+                            label={<div className={classesMain.TabItemText}>{item.categoryName}</div>}
+                            value={item.id}/>
+                    )
+                }
+                {
+                    TabList.map(itemCategories =>
+                        <CustomTabPanel className={classesMain.TabsPanelMobile} rowSpacing={1}
+                                        key={itemCategories.id}
+                                        columnSpacing={{xs: 1, sm: 2, md: 3}} value={itemCategories.id}>
+                            <Grid item xs={2}>
+                                <CustomButton onClick={handleOpen} name='Заказать'/>
+                            </Grid>
+                            <Grid
+                                item
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'center',
+                                    flexWrap: 'wrap-reverse'
+                                }}
+                                xs={10}>
+                                <CustomSelect
+                                    valueSelect={countDocument}
+                                    size='small'
+                                    xs={1}
+                                    contentCustomSelect="Кол-во"
+                                    setValueSelect={(event) => setCountDocument(Number(event.target.value))}>
+                                    {
+                                        [6, 12, 18].map(item =>
+                                            <MenuItem className={classesMain.SelectItems}
+                                                      key={item}
+                                                      value={item}>
+                                                {item}
+                                            </MenuItem>
+                                        )
+                                    }
+                                </CustomSelect>
+                                <ClickAwayButton title={
+                                    <>
+                                        <FilterListIcon className={classesMain.Text}/>
+                                        <Typography className={classesMain.Text}>Фильтр</Typography>
+                                    </>
+                                }>
+                                    <CustomAutocomplete
+                                        value={chosenType}
+                                        options={listTypes}
+                                        getOptionLabel={(option) => option.typeName}
+                                        label='Тип справки'
+                                        onChange={(e, value) => {
+                                            setChosenType(value)
+                                        }}
+                                    />
+                                    <Grid container display='flex'>
+                                        <CustomButton onClick={filterByType} name='Поиск'/>
+                                        <CustomButton onClick={resetFilter} name='Сбросить фильтр'/>
+                                    </Grid>
+                                </ClickAwayButton>
+
+                                <ToggleButtonGroup
+                                    style={{marginLeft: '10px'}}
+                                    color="primary"
+                                    value={view}
+                                    size={'small'}
+                                    exclusive
+                                    onChange={handleChangeView}
+                                >
+                                    <ToggleButton value="list"><ViewHeadlineIcon
+                                        style={{fontSize: '20px'}}/></ToggleButton>
+                                    <ToggleButton value="grid"><GridViewIcon style={{fontSize: '20px'}}/></ToggleButton>
+                                </ToggleButtonGroup>
+
+                            </Grid>
+                            {
+                                itemCategories.id === "1" ?
+
+                                    listDocuments === 'Нет справок' ?
+                                        <>
+                                            <CustomAlert
+                                                severity="info"
+                                                title='Информация!'
+                                                content='Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст Рыба-текст '
+                                                activeAlert={true}
+                                            />
+                                        </>
+                                        : listDocuments.length !== 0 ?
+                                            view === 'grid' ?
+                                                <>
+                                                    {listDocuments?.map((itemDocuments, index) =>
+
+                                                            <ItemDocumentsGrid
+                                                                grow={grow}
+                                                                timeout={index*200}
+                                                                userId={Cookies.get("userId")}
+                                                                key={itemDocuments.id}
+                                                                itemDocuments={itemDocuments}
+                                                                role={role}/>
+
+
+
+                                                    )}
+                                                    <Grid key={'pagination'} item xs={12}>
+                                                        <Grid
+                                                            container
+                                                            direction="row"
+                                                            justifyContent="center"
+                                                            alignItems="center"
+                                                            spacing={2}
+                                                        >
+                                                            <Grid item xs={12}>
+                                                                <Pagination
+                                                                    boundaryCount={2}
+                                                                    style={{width: '100%'}}
+                                                                    count={count}
+                                                                    onChange={handleChangePagination}
+                                                                    variant="outlined"
+                                                                    shape="rounded"
+                                                                    showFirstButton
+                                                                    showLastButton/>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
+                                                </>
+
+                                                : [listDocuments?.map((itemDocuments, index )=>
+                                                    <Grid key={itemDocuments.id} item xs={12}>
+                                                        <ItemDocumentsLine
+                                                            grow={grow}
+                                                            timeout={index*200}
+                                                            userId={Cookies.get("userId")}
+                                                            itemDocuments={itemDocuments}
+                                                            role={role}/>
+                                                    </Grid>
+                                                ), <CustomButton key={'button order 2'} onClick={handleOpen} name='Заказать'/>,
+                                                    <Pagination
+                                                        style={{width: '100%'}}
+                                                        count={count}
+                                                        onChange={handleChangePagination}
+                                                        variant="outlined"
+                                                        shape="rounded"
+                                                        showFirstButton
+                                                        showLastButton/>
+                                                ]
+                                            :
+                                            <Grid item
+                                                  style={{
+                                                      marginLeft: 'auto',
+                                                      marginRight: 'auto',
+                                                      marginTop: 100
+                                                  }}>
+                                                <CircularProgress/>
+                                            </Grid>
+                                    :
+                                    view === 'grid' ?
+                                        listArchive?.map(itemArchive =>
+                                            <ItemDocumentsGridArchive
+                                                userId={Cookies.get("userId")}
+                                                key={itemArchive.id}
+                                                itemArchive={itemArchive}
+                                                role={role}/>
+                                        )
+                                        : listArchive?.map(itemArchive =>
+                                            <Grid key={itemArchive.id} item xs={12}>
+                                                <ItemDocumentsLineArchive
+                                                    userId={Cookies.get("userId")}
+                                                    itemArchive={itemArchive}
+                                                    role={role}/>
+                                            </Grid>
+                                        )
+                            }
+                        </CustomTabPanel>
+                    )
+                }
+
+            </CustomTab>
+        </MainDocuments>
+    );
+}
+
+export default Documents;
+>>>>>>> origin/transitions

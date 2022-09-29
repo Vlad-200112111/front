@@ -1,0 +1,247 @@
+import {useState, useEffect} from "react";
+import {
+    Grid,
+    Typography,
+    MenuItem,
+<<<<<<< HEAD
+
+} from "@material-ui/core";
+
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Button from '@mui/material/Button';
+=======
+    Box,
+    Tab,
+    Button,
+    IconButton
+} from "@material-ui/core";
+>>>>>>> origin/refactoring
+import Cookies from "js-cookie";
+import api from "./../../../Services/api";
+import CloseIcon from '@mui/icons-material/Close';
+import useStylesMain from "../../../Styles/MainStyles";
+import useStylesPortfolio from "../../../Styles/PortfolioStyles";
+import CustomModal from "../../UI/CustomModal/CustomModal";
+import CustomInput from "../../UI/CustomInput/CustomInput";
+import CustomSelect from "../../UI/CustomSelect/CustomSelect";
+import CustomTextarea from "../../UI/CustomTextarea/CustomTextarea";
+import ItemPortfolio from "./ItemPortfolio";
+import CustomTab from "../../UI/CustomTab/CustomTab";
+import CustomTabPanel from "../../UI/CustomTabPanel/CustomTabPanel";
+import CustomButton from "../../UI/CustomButton/CustomButton";
+
+
+
+function Portfolio() {
+    const classesMain = useStylesMain()
+    const classesPortfolio = useStylesPortfolio();
+    const token = Cookies.get("auth-token");
+    const userId = Cookies.get("userId");
+    const [listCategories, setListCategories] = useState([]);
+    const [achievements, setAchievements] = useState([]);
+    const [reloading, setReloading] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [showImage, setShowImage] = useState();
+
+    useEffect(async () => {
+        const {data: ListCategoriesAchievements} = await api.portfolio.getListCategoriesAchievements();
+        setListCategories(ListCategoriesAchievements)
+        setReloading(false)
+
+        const {data: ListAchievementsByUser} = await api.portfolio.getListAchievementsByUser();
+        setAchievements(ListAchievementsByUser)
+    }, [reloading]);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
+    const onSubmit = async (event) => {
+        event.preventDefault()
+        setReloading(true)
+        const formData = new FormData(event.target)
+        const object = new Object()
+        formData.append('Token', token)
+        formData.append('UserId', userId)
+        object.documentFromFront =
+            {
+                id: 1,
+                userId: formData.get('UserId'),
+                categoryId: formData.get('CategoryId'),
+                name: formData.get('Name'),
+                description: formData.get('Description'),
+                token: formData.get('Token'),
+                document: showImage.slice(showImage.indexOf(',') + 1)
+            };
+        const formdataI = new FormData();
+        const {data: answer} = await api.portfolio.sendAchievement(object.documentFromFront)
+        if (answer.statusCode === 200) {
+            setOpen(false)
+        }
+    };
+    function onloadImageForShowing(event) {
+        if (event.target.files && event.target.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                setShowImage(e.target.result)
+            }
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+    const delImg = () => {
+        var img = document.getElementById('uploadPhoto')
+        img.value = null
+        setShowImage('')
+    }
+
+    return (
+        <div>
+            <div className="pageBack"></div>
+            <Grid className={classesMain.backgroundMain}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Typography className={classesMain.Title} variant="h1">Портфолио</Typography>
+                    </Grid>
+                </Grid>
+                <Box>
+                    <CustomModal
+                        open={open}
+                        handleClose={handleClose}
+                        onSubmit={onSubmit}
+                        title='Загрузка грамоты'
+                        button='Сохранить'
+                        buttonType='submit'
+                    >
+                                    <Grid  item xs={4}>
+                                        <Grid   container
+                                                direction="row"
+                                                justifyContent="center"
+                                                alignItems="center"
+                                                spacing={3}>
+                                            <Grid item>
+                                                <Button
+                                                    className={classesMain.button}
+                                                    variant="contained"
+                                                    component="label">
+                                                    Выбрать файл
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        id="uploadPhoto"
+                                                        accept="image/*"
+                                                        name="uploadPhoto"
+                                                        onChange={onloadImageForShowing}
+                                                    />
+
+                                                </Button>
+                                            </Grid>
+                                            <Grid item>
+                                                <div style={{position: 'relative'}}>
+                                                    <Box
+                                                        component="img"
+                                                        className={classesPortfolio.loadImage}
+                                                        alt=""
+                                                        src={showImage}
+                                                    ></Box>
+                                                    {
+                                                        showImage ?
+                                                            <IconButton onClick={delImg}
+                                                                        className={classesPortfolio.removeAchievement}>
+                                                                <CloseIcon/>
+                                                            </IconButton>
+                                                            :
+                                                            ''
+                                                    }
+                                                </div>
+                                                <Typography className={classesMain.Text}>
+                                                    {!showImage ?
+                                                        'Файл не выбран'
+                                                        :
+                                                        ''}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <Grid
+                                            container
+                                            direction="column"
+                                            justifyContent="center"
+                                            alignItems="flex-end"
+                                        >
+                                            <CustomInput
+                                                title='Название'
+                                                name='Name'
+                                                label='Название'
+                                            />
+                                            <CustomSelect
+                                                contentCustomSelect="Категория"
+                                                nameCustomSelect='CategoryId'
+                                            >
+                                                {
+                                                    listCategories.map(item =>
+
+                                                        <MenuItem key={item.id} className={classesMain.SelectItems}
+                                                                  value={item.id}>{item.categoryName}</MenuItem>
+                                                    )
+                                                }
+                                            </CustomSelect>
+                                            <CustomTextarea
+                                                nameCustomTextarea="Description"
+                                                label='Описание'
+                                            />
+                                        </Grid>
+                                    </Grid>
+                    </CustomModal>
+
+                    <CustomTab Length={listCategories.length} firstTab={1}>
+
+                        {
+                            listCategories.map(item =>
+                                <Tab
+                                    key={item.id}
+                                    className={'1' === item.id ? classesMain.TabActive : ''}
+                                    label={<div className={classesMain.TabItemText}>{item.categoryName}</div>}
+                                    value={item.id}/>
+                            )
+                        }
+
+                        {listCategories.map(itemCategories =>
+                                <CustomTabPanel value={itemCategories.id}>
+                                    {
+                                        achievements.map(itemAchievements => (
+
+                                                itemCategories.id === itemAchievements.categoryId ?
+
+                                                    <ItemPortfolio
+                                                        itemAchievements={itemAchievements}
+                                                        token={token}
+                                                        setAchievements={setAchievements}
+                                                        achievements={achievements}
+                                                        listCategories={listCategories}
+                                                        userId={userId}
+                                                    />
+                                                    : ""
+                                            )
+                                        )
+                                    }
+                                </CustomTabPanel>
+                        )}
+                    </CustomTab>
+
+                        <CustomButton
+                        onClick={handleOpen}
+                        name='Загрузить'/>
+
+
+
+                </Box>
+            </Grid>
+        </div>
+    );
+}
+
+export default Portfolio;

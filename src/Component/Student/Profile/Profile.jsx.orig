@@ -1,0 +1,574 @@
+import {useState, useEffect} from "react";
+import {
+    FormControl,
+    Grid, InputLabel,
+    makeStyles, MenuItem, Select,
+    Typography
+
+} from "@material-ui/core";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+    Box,
+    Button,
+    Popper,
+    Fade,
+    Paper, ListItem, TextField
+} from '@mui/material';
+import {
+    TabContext,
+    TabList,
+    TabPanel
+} from '@mui/lab';
+import Cookies from "js-cookie";
+
+import axios from "axios";
+import GitHubIcon from '@mui/icons-material/GitHub';
+import EditIcon from '@mui/icons-material/Edit';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import EmailIcon from '@mui/icons-material/Email';
+import IconButton from "@mui/material/IconButton";
+import AddIcon from '@mui/icons-material/Add';
+import PopOver from '../../UI/PopOver/PopOver';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CheckIcon from '@mui/icons-material/Check';
+
+const useStyles = makeStyles((theme) => ({
+    backgroundMain: {
+        padding: '1rem',
+        background: 'rgba(90, 125, 207, 0.8)',
+        backdropFilter: 'blur(10)'
+    },
+    Title: {
+        color: '#fff',
+        fontWeight: 700,
+        display: 'flex',
+        justifyContent: 'center',
+        fontSize: '2.5rem',
+        lineHeight: '91.02%',
+        padding: '20px 0 50px 0'
+    },
+    Select: {
+
+        '& label.Mui-focused': {
+            color: 'green',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#fff',
+        },
+
+        background: '#fff !important',
+        color: '#000',
+
+    },
+    SelectItems: {
+        color: '#000'
+    },
+    Pagination: {
+        root: {
+            "& > *": {
+                marginTop: theme.spacing(2)
+            },
+            "& .MuiPaginationItem-icon": {
+                backgroundColor: "yellow"
+            }
+        }
+    }
+
+}));
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 'auto',
+    minWidth: '40rem',
+    bgcolor: 'rgba(149, 171, 221, 0.7)',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
+function Profile() {
+    const classes = useStyles();
+    const [listUser, setListUser] = useState([])
+
+    const [showAddLanguages, setShowAddLanguages] = useState(false)
+
+    const [languages, setLanguages] = useState([
+
+    ])
+    const [languagesList, setLanguagesList] = useState([
+        {id:'1', language:'Русский язык А1', description:'Понимаю и могу употребить в речи знакомые\n' +
+                '                                                        фразы и выражения, необходимые для выполнения конкретных задач.\n' +
+                '                                                        Могу представиться и представить других, задавать вопросы и\n' +
+                '                                                        отвечать на вопросы о месте жительства, знакомых, имуществе.\n' +
+                '                                                        Могу участвовать в несложном разговоре, если собеседник говорит\n' +
+                '                                                        медленно и отчетливо и готов оказать помощь.'},
+        {id:'2', language: 'Английский язык А2', description:'English A2 description'},
+        {id:'3', language: 'Английский язык B2', description:'English B2 description'}
+    ])
+
+    const [chosenLanguage, setChosenLanguage] = useState('1')
+    const addLanguage = () =>{
+        let canAdd = true
+        for (let i = 0; i<languages.length; i++ ){
+            if (chosenLanguage.id == languages[i].id){
+                canAdd = false
+            }
+        }
+        if (canAdd){
+            setLanguages([...languages, chosenLanguage])
+            setShowAddLanguages(false)
+        }
+        else{
+            alert('такой элемент уже есть')
+        }
+    }
+    const [chosenHardSkill, setChosenHardSkill] = useState('1')
+    const addHardSkill = () =>{
+        let canAdd = true
+        for (let i = 0; i<hardSkills.length; i++ ){
+            if (chosenHardSkill.id == hardSkills[i].id){
+                canAdd = false
+            }
+        }
+        if (canAdd){
+            setHardSkills([...hardSkills, chosenHardSkill])
+            setShowAddHardSkills(false)
+        }
+        else{
+            alert('такой элемент уже есть')
+        }
+    }
+    const [hardSkills, setHardSkills] = useState([
+
+    ])
+    const [hardSkillsList, setHardSkillsList] = useState([
+        {id: '1', skill:'скилл 1', description: 'skill 1 description'},
+        {id: '2', skill:'скилл 2', description: 'skill 2 description'},
+        {id: '3', skill:'скилл 3', description: 'skill 3 description'},
+        {id: '4', skill:'скилл 4', description: 'skill 4 description'},
+        {id: '5', skill:'скилл 5', description: 'skill 5 description'},
+        {id: '6', skill:'скилл 6', description: 'skill 6 description'}
+
+
+    ])
+    const [showAddHardSkills, setShowAddHardSkills] = useState(false)
+    const [showAddSoftSkills, setShowAddSoftSkills] = useState(false)
+    const [softSkills, setSoftSkills] = useState([
+    ])
+    const [softSkillsList, setSoftSkillsList] = useState([
+        {id: '1', skill:'скилл 1', description: 'skill 1 description'},
+        {id: '2', skill:'скилл 2', description: 'skill 2 description'},
+        {id: '3', skill:'скилл 3', description: 'skill 3 description'},
+        {id: '4', skill:'скилл 4', description: 'skill 4 description'},
+        {id: '5', skill:'скилл 5', description: 'skill 5 description'},
+        {id: '6', skill:'скилл 6', description: 'skill 6 description'}
+
+
+    ])
+    const [chosenSoftSkill, setChosenSoftSkill] = useState('1')
+    const addSoftSkill = () =>{
+        let canAdd = true
+        for (let i = 0; i<softSkills.length; i++ ){
+            if (chosenSoftSkill.id == softSkills[i].id){
+                canAdd = false
+            }
+        }
+        if (canAdd){
+            setSoftSkills([...softSkills, chosenSoftSkill])
+            setShowAddSoftSkills(false)
+        }
+        else{
+            alert('такой элемент уже есть')
+        }
+    }
+    const [aboutMe, setAboutMe] = useState('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+    const [showEditAboutMe, setShowEditAboutMe] = useState(false)
+    const [showEditProfile, setShowEditProfile] = useState(false)
+    useEffect(() => {
+        getUserName(Cookies.get('userId'))
+
+    }, [])
+
+    async function getUserName(id) {
+        await axios.get(`https://cabinet.zabgu.ru/Authorization/api/v1/APerson?userId=${id}`)
+            .then(res => setListUser(res.data))
+    }
+
+
+    useEffect(() => {
+
+    }, []);
+
+
+    return (
+        <div>
+            <Grid
+                maxWidth="xs"
+                className={classes.backgroundMain}
+            >
+                <Grid container spacing={3}>
+                    <Grid style={{display:'flex', flexDirection:'column'}} item xs={12}>
+                        <Typography
+                            className={classes.Title}
+                            variant="h1"
+                        >
+                            Профиль
+                        </Typography>
+                        <div onClick={()=>setShowEditProfile(!showEditProfile)} style={{display:'flex', alignItems:'center',alignSelf:'end', cursor:'pointer'}}>
+
+                            <Typography style={{color:'#fff'}}>
+                                {!showEditProfile? 'Редактировать' : 'Сохранить'}
+                            </Typography>
+                            <IconButton  style={{alignSelf:'end', marginRight:'30px', color:'#fff'}}>
+                                {!showEditProfile? <SettingsIcon/> : <CheckIcon/>}
+                            </IconButton>
+                        </div>
+
+                    </Grid>
+                </Grid>
+                <Box
+                    sx={{
+                        width: '100%',
+                        typography: 'body1',
+                        display:'flex',
+                        justifyContent:'center'
+                    }}>
+
+                    <Grid style={{maxWidth:'800px'}}
+                        container
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Grid item>
+                            <Grid
+                                container
+                                direction="row"
+                                justifyContent="center"
+                                alignItems="center"
+                            >
+                                <Grid item
+                                      xs={3}>
+                                    <Box
+                                        component="img"
+                                        alt="Profile"
+                                        src={require("./../../../Image/Profile/profile.png")}
+                                    />
+                                </Grid>
+                                <Grid item
+                                      xs={7}>
+                                    <Typography
+                                        style={{color: '#fff'}}
+                                        variant="h6"
+                                    >
+                                        ФИО: {listUser.lastname} {listUser.name} {listUser.patronymic}
+                                        <br/>
+                                        Адрес эл. почты: {listUser.email}
+                                        <br/>
+                                        Пол: {listUser.gender}
+                                    </Typography>
+                                </Grid>
+                                <Grid item
+                                      xs={2}>
+                                    <Typography
+                                        style={{color: '#fff'}}
+                                        variant="h6"
+                                    >
+                                        <GitHubIcon/> GitHub
+                                        <br/>
+                                        <YouTubeIcon/> YouTube
+                                        <br/>
+                                        <TelegramIcon/> Telegram
+                                        <br/>
+                                        <EmailIcon/> Email
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                style={{alignItems:'start'}}
+                                container
+                                direction="row"
+                                justifyContent="center"
+                                alignItems="center"
+                            >
+                                <Grid  item
+                                      xs={6}>
+
+                                    <Typography style={{color:'#fff'}} variant='h5'>
+                                        Знание языков
+                                    </Typography>
+
+
+                                    {
+                                        languages.map(item=>
+
+                                            <PopOver description={item.description} content={item.language}/>
+                                        )
+                                    }
+
+
+
+                                    <Grid item style={{marginRight:'50px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                        {
+                                            showAddLanguages?
+                                                <FormControl style={{borderRadius:'0'}}  fullWidth variant="filled">
+                                                    <InputLabel style={{fontSize:'12px'}} id="selectLanguages">Знание языков</InputLabel>
+                                                    <Select
+                                                        style={{borderRadius:'0'}}
+                                                        className={classes.Select}
+                                                        labelId="selectLanguages"
+                                                        id="selectLanguage"
+                                                        name="languageId"
+                                                        onChange={(event)=> setChosenLanguage(event.target.value)}
+                                                    >
+                                                        {
+                                                            languagesList.map(item=>
+                                                                <MenuItem key={item.id} className={classes.SelectItems} value={item}>{item.language}</MenuItem>
+                                                            )
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                                :
+                                                ''
+                                        }
+
+                                    </Grid>
+                                    {
+                                        !showAddLanguages?
+<<<<<<< HEAD
+                                            <div onClick={()=> setShowAddLanguages(!showAddLanguages)} style={{background:' rgb(255 152 69)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+=======
+                                            showEditProfile?
+                                            <div onClick={()=> setShowAddLanguages(!showAddLanguages)} style={{background:' linear-gradient(0deg, #F9C96D, #F9C96D)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+>>>>>>> origin/profile_fix
+                                                <IconButton>
+                                                    <AddIcon  style={{color:'#fff'}}/>
+                                                </IconButton>
+                                            </div>
+                                                :
+                                                ''
+                                            :
+                                            <div style={{display:'flex'}}>
+                                                <Button onClick={addLanguage} style={{background:' rgb(255 152 69)', marginRight:'5px', borderRadius:'0', color:'#fff'}} >
+                                                    Добавить
+                                                </Button>
+
+                                                <Button onClick={()=> setShowAddLanguages(!showAddLanguages)} style={{background:' rgb(255 152 69)', borderRadius:'0', color:'#fff'}} >
+                                                    Отмена
+                                                </Button>
+
+                                            </div>
+
+                                    }
+
+
+                                </Grid>
+
+                                <Grid item
+                                      xs={6}>
+
+                                    <Typography style={{color:'#fff'}} variant='h5'>
+                                        Навыки
+                                    </Typography>
+                                    <div>
+                                        <Typography style={{color:'#fff'}}>
+                                            Профессионально-технические:
+                                        </Typography>
+                                        {
+                                            hardSkills.map(item=>
+                                                <PopOver content={item.skill} description={item.description}/>
+                                            )
+                                        }
+
+                                        <div>
+                                            {
+                                                showAddHardSkills?
+                                                    <FormControl style={{borderRadius:'0'}}  fullWidth variant="filled">
+                                                        <InputLabel style={{fontSize:'12px'}} id="selectLanguages">Навыки</InputLabel>
+                                                        <Select
+                                                            style={{borderRadius:'0'}}
+                                                            className={classes.Select}
+                                                            labelId="selectHardSkills"
+                                                            id="selectHardSkill"
+                                                            name="hardSkillId"
+                                                            onChange={(event)=> setChosenHardSkill(event.target.value)}
+                                                        >
+                                                            {
+                                                                hardSkillsList.map(item=>
+                                                                    <MenuItem key={item.id} className={classes.SelectItems} value={item}>{item.skill}</MenuItem>
+                                                                )
+                                                            }
+                                                        </Select>
+                                                    </FormControl>
+                                                    :
+                                                    ''
+                                            }
+                                            {
+                                                !showAddHardSkills?
+<<<<<<< HEAD
+                                                    <div onClick={()=> setShowAddHardSkills(!showAddHardSkills)} style={{background:' rgb(255 152 69)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+                                                        <IconButton>
+                                                            <AddIcon  style={{color:'#fff'}}/>
+                                                        </IconButton>
+                                                    </div>
+=======
+
+                                                        showEditProfile?
+                                                            <div onClick={()=> setShowAddHardSkills(!showAddHardSkills)} style={{background:' linear-gradient(0deg, #F9C96D, #F9C96D)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+                                                                <IconButton>
+                                                                    <AddIcon  style={{color:'#fff'}}/>
+                                                                </IconButton>
+                                                            </div>
+                                                            :
+                                                            ''
+
+
+>>>>>>> origin/profile_fix
+                                                    :
+                                                    <div style={{display:'flex'}}>
+                                                        <Button onClick={addHardSkill}  style={{background:' rgb(255 152 69)', marginRight:'5px', borderRadius:'0', color:'#fff'}} >
+                                                            Добавить
+                                                        </Button>
+
+                                                        <Button onClick={()=> setShowAddHardSkills(!showAddHardSkills)}  style={{background:' rgb(255 152 69)', borderRadius:'0', color:'#fff'}} >
+                                                            Отменa
+                                                        </Button>
+
+                                                    </div>
+                                            }
+
+
+
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Typography style={{color:'#fff'}}>
+                                            Социально-волевые компетенции:
+                                        </Typography>
+                                    </div>
+
+
+                                    {
+                                        softSkills.map(item=>
+                                            <PopOver content={item.skill} description={item.description}/>
+                                        )
+                                    }
+                                    <div>
+                                        {
+                                            showAddSoftSkills?
+                                                <FormControl style={{borderRadius:'0'}}  fullWidth variant="filled">
+                                                    <InputLabel style={{fontSize:'12px'}} id="selectLanguages">Навыки</InputLabel>
+                                                    <Select
+                                                        style={{borderRadius:'0'}}
+                                                        className={classes.Select}
+                                                        labelId="selectSoftSkills"
+                                                        id="selectSoftSkill"
+                                                        name="softSkillId"
+                                                        onChange={(event)=> setChosenSoftSkill(event.target.value)}
+                                                    >
+                                                        {
+                                                            softSkillsList.map(item=>
+                                                                <MenuItem key={item.id} className={classes.SelectItems} value={item}>{item.skill}</MenuItem>
+                                                            )
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                                :
+                                                ''
+                                        }
+                                        {
+                                            !showAddSoftSkills?
+<<<<<<< HEAD
+                                                <div onClick={()=> setShowAddSoftSkills(!showAddSoftSkills)} style={{background:' rgb(255 152 69)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+=======
+                                                showEditProfile?
+                                                <div onClick={()=> setShowAddSoftSkills(!showAddSoftSkills)} style={{background:' linear-gradient(0deg, #F9C96D, #F9C96D)',width:'30px',height:'30px', display:'flex', justifyContent:'center'}}>
+>>>>>>> origin/profile_fix
+                                                    <IconButton>
+                                                        <AddIcon  style={{color:'#fff'}}/>
+                                                    </IconButton>
+                                                </div>
+                                                    :
+                                                    ''
+                                                :
+                                                <div style={{display:'flex'}}>
+                                                    <Button onClick={addSoftSkill}  style={{background:' rgb(255 152 69)', marginRight:'5px', borderRadius:'0', color:'#fff'}} >
+                                                        Добавить
+                                                    </Button>
+
+                                                    <Button onClick={()=> setShowAddSoftSkills(!showAddSoftSkills)}  style={{background:' rgb(255 152 69)', borderRadius:'0', color:'#fff'}} >
+                                                        Отменa
+                                                    </Button>
+
+                                                </div>
+                                        }
+
+
+                                    </div>
+
+
+
+
+                                </Grid>
+
+                                {
+                                    !showEditProfile?
+                                        <div style={{width:'100%', background:'rgba(149, 171, 221, 0.7)', padding:'20px', marginTop:'20px'}}>
+                                            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                                <Typography variant='h5' style={{color:'#fff'}}>
+                                                    Обо мне
+                                                </Typography>
+
+
+
+
+                                            </div>
+
+                                            <Typography style={{color:'#fff'}}>
+                                                {aboutMe}
+                                            </Typography>
+                                        </div>
+                                        :
+                                        <div style={{width:'100%', display:'flex',flexDirection:'column'}}>
+                                            <Typography variant='h5' style={{color:'#fff'}}>
+                                                Обо мне
+                                            </Typography>
+
+                                            <TextField
+                                                style={{padding:'10px 10px', marginBottom:'10px', width:'800px'}}
+                                                className={classes.Select}
+                                                id="filled-textarea"
+                                                placeholder="Обо мне"
+                                                multiline
+                                                variant="standard"
+                                                fullWidth={true}
+                                                value={aboutMe}
+                                                onChange={(event)=>setAboutMe(event.target.value)}
+                                            />
+<<<<<<< HEAD
+                                            <Button onClick={()=>setShowEdit(!showEdit)}   style={{background:' rgb(255 152 69)', marginRight:'5px', borderRadius:'0',maxWidth:'140px', color:'#fff'}} >
+                                                Сохранить
+                                            </Button>
+=======
+
+>>>>>>> origin/profile_fix
+                                        </div>
+                                }
+
+
+
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                </Box>
+            </Grid>
+        </div>
+    );
+}
+
+export default Profile;

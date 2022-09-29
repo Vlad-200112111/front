@@ -1,0 +1,108 @@
+import axios from "../axios";
+import Cookies from "js-cookie";
+
+
+const config = {
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Accept': '/*/'
+    },
+};
+const userId = Cookies.get("userId");
+
+const endpoints = {
+    getListTypes: () => axios.get("Documents/api/v1/documents/types", {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getLog: (idDocument) => axios.get(`Documents/api/v1/documents/${idDocument}/logs`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getProductionTimeDocument: (idType) => axios.get(`Documents/api/v1/documents/types/${idType}`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getStatuses: () => axios.get("Documents/api/v1/documents/statuses", {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getModelDocument: (idType) => axios.get(`Documents/api/v1/documents/types/${idType}/model`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getArchive: () => axios.get(`Documents/api/v1/documents/archive`, {
+        params: {
+            token: Cookies.get("auth-token"),
+            userId: userId
+        }
+    }),
+<<<<<<< HEAD
+    getArchiveById: (idDocument) => axios.get(`Documents/api/v1/documents/archive/${idDocument}`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+=======
+    getEmployerArchive:()=>axios.get(`Documents/api/v1/documents/archive/employer`,{params:{
+        token:Cookies.get('auth-token')
+        }}),
+>>>>>>> origin/employee_archive
+    getListDocuments: () => axios.get("Documents/api/v1/documents", {
+        params: {
+            token: Cookies.get("auth-token"),
+            userId: userId
+        }
+    }),
+    getListDocumentsFromEmployer: () => axios.get("Documents/api/v1/employer/documents", {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getListDocumentsByTypeIdForStudent: (TypeId) => axios.get("Documents/api/v1/employer/documents", {
+        params: {
+            token: Cookies.get("auth-token"),
+            typeId: TypeId,
+            userId: userId
+        }
+    }),
+    getListDocumentsByTypeIdForEmployer: (TypeId) => axios.get("Documents/api/v1/employer/documents", {
+        params: {
+            token: Cookies.get("auth-token"),
+            typeId: TypeId,
+        }
+    }),
+    getDocument: (idDocument) => axios.get(`Documents/api/v1/documents/${idDocument}`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getFile: (idDocument) => axios.get(`Documents/api/v1/documents/${idDocument}/attached-file`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    deleteFile: (idDocument) => axios.delete(`Documents/api/v1/documents/${idDocument}/attached-file`, {
+        params: {
+            token: Cookies.get("auth-token")
+        }
+    }),
+    getItemForSelect: (objName, typeId) => axios.get(`Documents/api/v1/documents/types/select`, {
+        params: {
+            token: Cookies.get("auth-token"),
+            objName: objName,
+            typeId: typeId
+        }
+    }),
+    updateStatus: (data, idDocument) => axios.patch(`Documents/api/v1/employer/documents/${idDocument}/status`, data, config),
+    updateDocument: (data, idDocument) => axios.put(`Documents/api/v1/documents/${idDocument}/fields`, data, config),
+    sendDocument: (data) => axios.post("Documents/api/v1/documents", data, config),
+    sendFile: (data, idDocument) => axios.post(`Documents/api/v1/documents/${idDocument}/attached-file`, data),
+};
+
+export default endpoints;
